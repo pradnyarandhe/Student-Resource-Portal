@@ -1,0 +1,13 @@
+body {
+  background-color: #0d1b2a;
+}
+
+h2 {
+  font-weight: bold;
+}
+
+.card h5 {
+  margin: 0;
+  font-size: 1rem;
+  text-align: center;
+}

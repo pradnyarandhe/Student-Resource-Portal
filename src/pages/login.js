@@ -15,11 +15,7 @@ function Login() {
     }
   }, [navigate]);
 
-  useEffect(() => {
-  if (localStorage.getItem("isAuthenticated") === "true") {
-    navigate("/dashboard");
-  }
-}, []);
+
 
   const [formData, setFormData] = useState({
     mobile: "",
@@ -47,72 +43,43 @@ function Login() {
     return Object.keys(errs).length === 0;
   };
 
-// const handleLogin = async () => {
 
 
-//   if (validate()) {
-//     try {
-//       const response = await fetch("http://localhost:5000/api/users/login", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({
-//           mobile: formData.mobile,
-//           password: formData.password
-//         })
-//       });
+  const handleLogin = async () => {
+    if (validate()) {
+      try {
+        const response = await fetch("http://localhost:5000/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            mobile: formData.mobile,
+            password: formData.password
+          })
+        });
 
-//       const data = await response.json();
+        const data = await response.json();
 
-//       if (response.ok) {
-//         console.log("Login success:", data);
-//         navigate("/dashboard");
-//       } else {
-//         alert(data.message || "Login failed");
-//       }
-//     } catch (error) {
-//       console.error("Login error:", error);
-//       alert("Something went wrong");
-//     }
-//   }
-// };
+        if (response.ok) {
+          console.log("Login success:", data);
 
-const handleLogin = async () => {
-  if (validate()) {
-    try {
-      const response = await fetch("http://localhost:5000/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          mobile: formData.mobile,
-          password: formData.password
-        })
-      });
+          // ✅ Set login state
+          console.log("Login success:", data);
+          localStorage.setItem("isAuthenticated", "true");
+          localStorage.setItem("userId", data.user.id);
+          localStorage.setItem("studentName", data.user.name); // optional
+          navigate("/dashboard");
 
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("Login success:", data);
-
-        // ✅ Set login state
-        localStorage.setItem("isAuthenticated", "true");
-
-        // Optionally store user info or token
-        // localStorage.setItem("user", JSON.stringify(data.user));
-
-        navigate("/dashboard");
-      } else {
-        alert(data.message || "Login failed");
+        } else {
+          alert(data.message || "Login failed");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("Something went wrong");
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Something went wrong");
     }
-  }
-};
+  };
 
   const handleRegisterRedirect = () => {
     navigate("/register");

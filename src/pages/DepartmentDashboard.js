@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import '../styled/dashboard.css'; // Optional: for custom styles
+import { FaUserCircle } from "react-icons/fa"; // 👈 Import the profile icon
 
 const departments = [
   {
@@ -32,9 +33,23 @@ const Dashboard = () => {
     navigate(`/department/${deptId}`);
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   return (
-    <div className="container text-center py-5">
-      <h2 className="mb-4 text-white">Select Your Department</h2>
+    <div className="container py-4">
+      {/* Profile Icon in top-right */}
+      <div className="d-flex justify-content-end mb-3">
+        <FaUserCircle
+          size={32}
+          style={{ cursor: "pointer", color: "#0d6efd" }}
+          title="Profile"
+          onClick={handleProfileClick}
+        />
+      </div>
+
+      <h2 className="mb-4 text-white text-center">Select Your Department</h2>
       <div className="row row-cols-1 row-cols-md-4 g-4">
         {departments.map((dept, index) => (
           <div className="col d-flex" key={index}>

@@ -4,6 +4,7 @@ import ProtectedLayout from "./components/ProtectedLayout";
 import Home from "./pages/Home";
 import Login from "./pages/login";
 import Register from "./pages/Register";
+import UserProfile from "./pages/UserProfile";
 import DepartmentDashboard from "./pages/DepartmentDashboard";
 import McaResources from "./components/McaResources";
 import MscResources from "./components/MscResources";
@@ -11,7 +12,8 @@ import PgdcsResources from "./components/PgdcsResources";
 import PgdcaResources from "./components/PgdcaResources";
 import PreviousPapersMCA from "./pages/PreviousPapersMCA";
 import BooksMCA from "./pages/BooksMCA";
-import CoursePage from "./pages/CoursePage"
+import CoursePage from "./pages/CoursePage";
+
 
 function App() {
   return (
@@ -37,7 +39,9 @@ function App() {
           <Route path="/department/pgdca" element={<PgdcaResources />} />
           <Route path="/resources/mca/pyqp" element={<PreviousPapersMCA />} />
           <Route path="/resources/mca/books" element={<BooksMCA />} />
-          <Route path="/courses/mca/:courseId"element={<CoursePage />} />
+          <Route path="/courses/mca/:courseId" element={<CoursePage />} />
+          <Route path="/profile" element={<UserProfile />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

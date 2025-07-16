@@ -17,15 +17,17 @@ const UserProfile = () => {
       }
     };
 
-    const fetchEnrollments = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/users/${userId}/enrollments`);
-        const data = await res.json();
-        setCourses(data);
-      } catch (err) {
-        console.error(" Failed to load enrolled courses:", err);
-      }
-    };
+   
+  const fetchEnrollments = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/users/${userId}/enrollments`);
+      const data = await res.json();
+      setCourses(data);  // This updates UI
+    } catch (err) {
+      console.error("Failed to load enrolled courses:", err);
+    }
+  }
+
 
     fetchUserProfile();
     fetchEnrollments();

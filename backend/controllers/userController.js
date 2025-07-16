@@ -66,7 +66,7 @@ export const getUserEnrollments = (req, res) => {
   const userId = req.params.id;
 
   const sql = `
-    SELECT c.title, e.is_completed 
+    SELECT c.id, c.title, e.is_completed
     FROM enrollments e
     JOIN courses c ON e.course_id = c.id
     WHERE e.user_id = ?
@@ -74,9 +74,9 @@ export const getUserEnrollments = (req, res) => {
 
   db.query(sql, [userId], (err, results) => {
     if (err) {
-      console.error("Error fetching enrollments:", err);
-      return res.status(500).json({ message: "Error loading enrollments" });
+      console.error("❌ Fetch Enrollments Error:", err);
+      return res.status(500).json({ message: "Failed to fetch enrollments" });
     }
-    res.json(results);
+    res.status(200).json(results);
   });
 };

@@ -3,17 +3,18 @@ import { useParams } from "react-router-dom";
 import { courseData } from "../data/coursesData";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useEffect } from "react";
 
 const CoursePage = () => {
   const { courseId } = useParams();
   const course = courseData[courseId];
-  const certificateRef = useRef();
-
+  const certificateRef = useRef(null);
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
   const [completedModules, setCompletedModules] = useState([]);
   const [quizAnswers, setQuizAnswers] = useState({});
+  const [studentName, setStudentName] = useState("Student Name");
 
-  if (!course) return <div>Course not found.</div>;
+
 
   const currentModule = course.modules[currentModuleIndex];
   const isLastModule = currentModuleIndex === course.modules.length - 1;
@@ -29,17 +30,51 @@ const CoursePage = () => {
     quizAnswers.hasOwnProperty(`${currentModule.id}-${idx}`)
   );
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    const userId = localStorage.getItem("userId");
+    const courseId = course.id; // ✅ This now works because course.id exists
+
     if (!isQuizCompleted) return;
+
+
+
     if (!completedModules.includes(currentModule.id)) {
       setCompletedModules([...completedModules, currentModule.id]);
     }
-    if (!isLastModule) {
+
+    if (isLastModule) {
+      // ✅ Mark course as completed in DB
+      try {
+        const response = await fetch("http://localhost:5000/api/enroll/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: Number(userId), courseId: Number(courseId) }),
+        });
+
+        const result = await response.json();
+        console.log(result.message);
+      } catch (err) {
+        console.error("Failed to mark course as completed", err);
+      }
+    } else {
       setCurrentModuleIndex(currentModuleIndex + 1);
     }
   };
 
-  const studentName = localStorage.getItem("name") || "Student Name";
+
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      fetch(`http://localhost:5000/api/users/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          setStudentName(data.name || "Student Name");
+        })
+        .catch(() => setStudentName("Student Name"));
+    }
+  }, []);
+
   const today = new Date().toLocaleDateString();
 
   const handleDownloadCertificate = () => {
@@ -53,6 +88,7 @@ const CoursePage = () => {
       pdf.save(`${course.title}_Certificate.pdf`);
     });
   };
+
 
   return (
     <div className="container mt-5">
@@ -89,6 +125,7 @@ const CoursePage = () => {
             disabled={!isQuizCompleted || completedModules.includes(currentModule.id)}
           >
             {isLastModule ? "Finish" : "Next Module"}
+
           </button>
         </div>
       </div>

@@ -1,50 +1,7 @@
-// // src/components/ProtectedLayout.js
-// import React from "react";
-// import { useNavigate, Outlet, useLocation } from "react-router-dom";
-// import { FiLogOut } from "react-icons/fi"; // logout icon from react-icons
-
-// const ProtectedLayout = () => {
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("isAuthenticated");
-//     navigate("/login");
-//   };
-
-//   const hideLogout = ["/login", "/register", "/"].includes(location.pathname);
-
-//   return (
-//     <div style={{ position: "relative", minHeight: "100vh" }}>
-//       {!hideLogout && (
-//         <div style={{
-//           position: "fixed",
-//           top: 15,
-//           right: 20,
-//           zIndex: 999,
-//           cursor: "pointer",
-//           backgroundColor: "#f8f9fa",
-//           padding: "8px",
-//           borderRadius: "50%",
-//           boxShadow: "0 0 8px rgba(0,0,0,0.1)"
-//         }}
-//         onClick={handleLogout}
-//         title="Logout"
-//         >
-//           <FiLogOut size={18} color="#dc3545" />
-//         </div>
-//       )}
-//       <Outlet />
-//     </div>
-//   );
-// };
-
-// export default ProtectedLayout;
-
-// src/components/ProtectedLayout.js
 import React from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
-import { FiLogOut, FiArrowLeft } from "react-icons/fi"; // icons
+import { FiLogOut, FiArrowLeft } from "react-icons/fi";
+import { FaUserCircle } from "react-icons/fa";
 
 const ProtectedLayout = () => {
   const navigate = useNavigate();
@@ -56,53 +13,90 @@ const ProtectedLayout = () => {
   };
 
   const handleBack = () => {
-    navigate(-1); // Go to previous page
+    navigate(-1);
+  };
+
+  const handleProfile = () => {
+    navigate("/profile");
   };
 
   const isPublicPage = ["/login", "/register", "/"].includes(location.pathname);
 
   return (
-    <div style={{ position: "relative", minHeight: "100vh" }}>
+    <div style={{ minHeight: "100vh" }}>
       {!isPublicPage && (
-        <>
+        <header
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "20px 20px",
+            boxShadow: "0px 25px 8px rgba(0,0,0,0.1)",
+            position: "sticky",
+            top: 0,
+            zIndex: 1000,
+          }}
+        >
+          {/* Back Button */}
           <div
             onClick={handleBack}
             style={{
-              position: "fixed",
-              top: 15,
-              left: 20,
-              zIndex: 999,
+              display: "flex",
+              alignItems: "center",
               cursor: "pointer",
-              padding: "8px",
-              borderRadius: "50%",
-              boxShadow: "0 0 8px rgba(0,0,0,0.1)"
+              color: "#007bff",
+              fontSize: "18px",
+              fontWeight: 500,
             }}
-            title="Back"
           >
-            <FiArrowLeft size={18} color="#007bff" />
+            <FiArrowLeft size={20} style={{ marginRight: "5px" }} />
+            Back
           </div>
 
-          <div
-            onClick={handleLogout}
-            style={{
-              position: "fixed",
-              top: 15,
-              right: 20,
-              zIndex: 999,
-              cursor: "pointer",
-              padding: "8px",
-              borderRadius: "50%",
-              boxShadow: "0 0 8px rgba(0,0,0,0.1)"
-            }}
-            title="Logout"
-          >
-            <FiLogOut size={18} color="#dc3545" />
+          {/* Center Title (optional) */}
+          <h4 style={{ margin: 0, color: "white", fontWeight: "600" }}>
+            Student Resource Portal
+          </h4>
+
+          {/* Right Icons */}
+          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+            {/* Profile Icon */}
+            <div
+              onClick={handleProfile}
+              style={{
+                cursor: "pointer",
+                color: "#007bff",
+                transition: "transform 0.2s ease-in-out",
+              }}
+              title="Profile"
+              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
+              onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            >
+              <FaUserCircle size={28} />
+            </div>
+
+            {/* Logout Button */}
+            <div
+              onClick={handleLogout}
+              style={{
+                cursor: "pointer",
+                color: "#dc3545",
+                transition: "transform 0.2s ease-in-out",
+              }}
+              title="Logout"
+              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.2)")}
+              onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            >
+              <FiLogOut size={26} />
+            </div>
           </div>
-        </>
+        </header>
       )}
 
-      {/* 🔽 Render Child Page */}
-      <Outlet />
+      {/* Page Content */}
+      <main style={{ padding: "20px" }}>
+        <Outlet />
+      </main>
     </div>
   );
 };

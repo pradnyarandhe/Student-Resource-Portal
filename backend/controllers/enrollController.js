@@ -35,19 +35,27 @@ export const enrollInCourse = (req, res) => {
   });
 };
 
-export const markCourseComplete = (req, res) => {
-  const { userId, courseId } = req.body;
+export const markCourseCompleted = async (req, res) => {
+  try {
+    const { userId, courseId } = req.body;
 
-  if (!userId || !courseId) {
-    return res.status(400).json({ message: "User ID and Course ID required" });
-  }
-
-  const sql = "UPDATE enrollments SET is_completed = true WHERE user_id = ? AND course_id = ?";
-  db.query(sql, [userId, courseId], (err, result) => {
-    if (err) {
-      console.error("Error updating enrollment:", err);
-      return res.status(500).json({ message: "Database error" });
+    if (!userId || !courseId) {
+      return res.status(400).json({ message: "User ID and Course ID required" });
     }
-    res.status(200).json({ message: "Course marked as completed" });
-  });
+
+    const [result] = await db.execute(
+      "UPDATE enrollments SET is_completed = 1 WHERE user_id = ? AND course_id = ?",
+      [userId, courseId]
+    );
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: "Course marked as completed" });
+    } else {
+      res.status(404).json({ message: "Enrollment not found" });
+    }
+  } catch (err) {
+    console.error("Error marking course completed:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
+

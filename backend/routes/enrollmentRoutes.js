@@ -5,6 +5,6 @@ import { markCourseCompleted } from '../controllers/enrollController.js';
 const router = express.Router();
 
 router.post("/", enrollInCourse);
-router.post("/complete", enrollController.markCourseComplete);
+router.post("/complete", markCourseCompleted); 
 
 export default router;

@@ -1,9 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { courseData } from "../data/coursesData";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { useEffect } from "react";
 
 const CoursePage = () => {
   const { courseId } = useParams();
@@ -13,8 +12,6 @@ const CoursePage = () => {
   const [completedModules, setCompletedModules] = useState([]);
   const [quizAnswers, setQuizAnswers] = useState({});
   const [studentName, setStudentName] = useState("Student Name");
-
-
 
   const currentModule = course.modules[currentModuleIndex];
   const isLastModule = currentModuleIndex === course.modules.length - 1;
@@ -32,18 +29,15 @@ const CoursePage = () => {
 
   const handleNext = async () => {
     const userId = localStorage.getItem("userId");
-    const courseId = course.id; // ✅ This now works because course.id exists
+    const courseId = course.id;
 
     if (!isQuizCompleted) return;
-
-
 
     if (!completedModules.includes(currentModule.id)) {
       setCompletedModules([...completedModules, currentModule.id]);
     }
 
     if (isLastModule) {
-      // ✅ Mark course as completed in DB
       try {
         const response = await fetch("http://localhost:5000/api/enroll/complete", {
           method: "POST",
@@ -61,14 +55,12 @@ const CoursePage = () => {
     }
   };
 
-
-
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
       fetch(`http://localhost:5000/api/users/${userId}`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           setStudentName(data.name || "Student Name");
         })
         .catch(() => setStudentName("Student Name"));
@@ -89,45 +81,58 @@ const CoursePage = () => {
     });
   };
 
-
   return (
-    <div className="container mt-5">
-      <h2>{course.title}</h2>
-      <p>{course.description}</p>
+    <div className="container mt-4 ">
+      <h2 className="text-light">{course.title}</h2>
+      <p className="text-light">{course.description}</p>
 
-      <div className="card mb-4">
-        <div className="card-body">
-          <h4>{currentModule.title}</h4>
-          <video width="100%" controls src={currentModule.videoUrl}></video>
-          <p className="mt-3">{currentModule.content}</p>
+      <div
+        className="mb-4 p-4 mt-5"
+        style={{
+          borderRadius: "12px",
+          boxShadow: "0 0 10px #282c34",
+          color: "#fff",
+        }}
+      >
+        <h4>{currentModule.title}</h4>
+        {/* <div style={{ justifyContent: "left", margin: "20px 0" }}>
+          <video
+            width="80%" // or "720" for fixed width
+            style={{ borderRadius: "8px", maxWidth: "720px", boxShadow: "0 0 12px rgba(0,0,0,0.5)" }}
+            controls
+            src={currentModule.videoUrl}
+          ></video>
+        </div> */}
+        <p className="mt-3" style={{ whiteSpace: "pre-line" }}>{currentModule.content}</p>
 
-          <h5 className="mt-4 text-start">Quiz:</h5>
-          {currentModule.quiz.map((q, qIdx) => (
-            <div key={qIdx}>
-              <p>{q.question}</p>
-              {q.options.map((opt, i) => (
-                <div key={i}>
+        <h5 className="mt-4">Quiz:</h5>
+        {currentModule.quiz.map((q, qIdx) => (
+          <div key={qIdx} className="mb-3">
+            <p>{q.question}</p>
+            {q.options.map((opt, i) => (
+              <div key={i}>
+                <label>
                   <input
                     type="radio"
                     name={`quiz-${currentModule.id}-${qIdx}`}
                     onChange={() => handleAnswer(qIdx, opt)}
                     checked={quizAnswers[`${currentModule.id}-${qIdx}`] === opt}
-                  />{" "}
+                    className="me-2"
+                  />
                   {opt}
-                </div>
-              ))}
-            </div>
-          ))}
+                </label>
+              </div>
+            ))}
+          </div>
+        ))}
 
-          <button
-            className="btn btn-primary mt-4"
-            onClick={handleNext}
-            disabled={!isQuizCompleted || completedModules.includes(currentModule.id)}
-          >
-            {isLastModule ? "Finish" : "Next Module"}
-
-          </button>
-        </div>
+        <button
+          className="btn btn-primary mt-3"
+          onClick={handleNext}
+          disabled={!isQuizCompleted}
+        >
+          {isLastModule ? "Finish Course" : "Next Module"}
+        </button>
       </div>
 
       {completedModules.length === course.modules.length && (
@@ -163,7 +168,8 @@ const CoursePage = () => {
           </div>
 
           <button
-            className="btn btn-success mt-3"
+            className="btn btn-success mt-2"
+            style={{ fontSize: "14px", padding: "8px 16px" }}
             onClick={handleDownloadCertificate}
           >
             Download Certificate

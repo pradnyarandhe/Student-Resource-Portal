@@ -17,16 +17,16 @@ const UserProfile = () => {
       }
     };
 
-   
-  const fetchEnrollments = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/users/${userId}/enrollments`);
-      const data = await res.json();
-      setCourses(data);  // This updates UI
-    } catch (err) {
-      console.error("Failed to load enrolled courses:", err);
+
+    const fetchEnrollments = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/users/${userId}/enrollments`);
+        const data = await res.json();
+        setCourses(data);  // This updates UI
+      } catch (err) {
+        console.error("Failed to load enrolled courses:", err);
+      }
     }
-  }
 
 
     fetchUserProfile();
@@ -45,6 +45,25 @@ const UserProfile = () => {
     })
       .then(res => res.json())
       .then(data => alert(data.message));
+  };
+
+  const handleDownloadCertificate = (courseTitle) => {
+    const studentName = profile.name;
+    const today = new Date().toLocaleDateString();
+
+    const certificateContent = `
+    Certificate of Completion
+    This certifies that ${studentName}
+    has successfully completed the course:
+    ${courseTitle}
+    Date: ${today}
+  `;
+
+    // Simple text PDF example
+    const pdfWindow = window.open("", "_blank");
+    pdfWindow.document.write(`<pre>${certificateContent}</pre>`);
+    pdfWindow.document.close();
+    pdfWindow.print();
   };
 
   return (
@@ -94,19 +113,32 @@ const UserProfile = () => {
             {courses.map((c, i) => (
               <li
                 key={i}
-                className="list-group-item d-flex justify-content-between align-items-center"
+                className="list-group-item d-flex justify-content-between align-items-center flex-column flex-md-row"
               >
-                {c.title}
-                <span
-                  className={`badge ${
-                    c.is_completed ? "bg-success" : "bg-warning text-dark"
-                  }`}
-                >
-                  {c.is_completed ? "Completed" : "Ongoing"}
-                </span>
+                <div style={{ width: "100%" }}>
+                  <strong>{c.title}</strong>
+                </div>
+
+                <div className="d-flex align-items-center gap-3">
+                  <span
+                    className={`badge ${c.is_completed ? "bg-success" : "bg-warning text-dark"}`}
+                  >
+                    {c.is_completed ? "Completed" : "Ongoing"}
+                  </span>
+                  {c.is_completed && (
+                    <button
+                      className="btn btn-success mt-1"
+                      style={{ fontSize: "12px", padding: "4px 8px", textAlign:"center" }}
+                      onClick={() => handleDownloadCertificate(c.title)}
+                    >
+                      Download Certificate
+                    </button>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
+
         )}
       </div>
     </div>

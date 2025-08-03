@@ -54,7 +54,7 @@ const ProtectedLayout = () => {
           </div>
 
           {/* Center Title (optional) */}
-          <h4 style={{ margin: 0, color: "white", fontWeight: "600" }}>
+          <h4 style={{ margin: 0, color: "white", fontWeight: "700" }}>
             Student Resource Portal
           </h4>
 

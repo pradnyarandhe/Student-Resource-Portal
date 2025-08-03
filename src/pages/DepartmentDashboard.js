@@ -39,17 +39,7 @@ const Dashboard = () => {
 
   return (
     <div className="container py-4">
-     
-      {/* <div className="d-flex justify-content-end mb-3">
-        <FaUserCircle
-          size={32}
-          style={{ cursor: "pointer", color: "#0d6efd" }}
-          title="Profile"
-          onClick={handleProfileClick}
-        />
-      </div> */}
-
-      <h2 className="mb-4 text-white text-center">Select Your Department</h2>
+      <h4 className="mb-4 text-white text-center">Select Your Department</h4>
       <div className="row row-cols-1 row-cols-md-4 g-4">
         {departments.map((dept, index) => (
           <div className="col d-flex" key={index}>
